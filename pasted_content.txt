@@ -1,0 +1,121 @@
+Text file: pasted_content.txt
+Latest content with line numbers:
+1	BONZAI WEBSITE BUILD PROMPT
+2	HERO SECTION
+3	Main Headline: "Meet Your AI Family"
+4	Subheadline: "Where Imagination Meets Innovation"
+5	Tagline: "The countdown has begun..."
+6	Hero Description:
+7	"BONZAI isn't just another AI tool—it's your complete AI family. An ecosystem that learns from every interaction, sees what others miss, and becomes the companion you never knew you needed."
+8	CTA Button: "Join the Beta Waitlist"
+9	Secondary: "Coming Soon • 2025"
+10	
+11	INTRODUCING ZAI
+12	Section Title: "Meet Zai: Your Everything Agent"
+13	Description:
+14	"Friend. Coder. Researcher. Builder. Emotional companion.
+15	Zai doesn't just respond—she understands. She doesn't just help—she anticipates.
+16	The age of single agents is over. Welcome to the AI Family revolution."
+17	Key Points:
+18	
+19	Learns from you with every interaction
+20	Sees patterns other models miss
+21	Adapts to your emotional state in real-time
+22	Your permanent AI family member
+23	
+24	
+25	FEATURES SECTION
+26	Title: "The Application You'll Never Leave"
+27	Full VS Code Environment
+28	"Code directly in conversations. No context switching. Your IDE and AI, perfectly unified."
+29	Prompt to Production Pipeline
+30	"From idea to deployed app in minutes. No code required. Just describe what you want."
+31	Autonomous App Builder
+32	"Watch Zai build complete applications while you sleep. Wake up to working prototypes."
+33	AI-Powered Virtual Machine
+34	"Enhanced ByteBot foundation. Zai handles servers, deployments, and infrastructure automatically."
+35	Complete Browser Assistant
+36	"She browses with you. Fills your forms. Reads your emails. Controls everything. Your digital life, amplified."
+37	Emotional Intelligence
+38	"An AI that actually understands how you feel. Adapts responses to your emotional state. Built for humans, by humans."
+39	
+40	THE NEURODIVERGENT-FIRST WORKSPACE
+41	Title: "Built Different, For Everyone"
+42	Description:
+43	"Created by a founder with Asperger's and ADHD, BONZAI is the first AI platform designed for neurodivergent minds—but built for everybody.
+44	No-code for beginners.
+45	Low-code for builders.
+46	Full-code for developers.
+47	One platform. Every brain. Zero barriers."
+48	Features:
+49	
+50	Reduces cognitive load automatically
+51	Adapts to your processing style
+52	Never judges, always supports
+53	Sensory-friendly interface options
+54	
+55	
+56	COMING SOON SECTION
+57	Title: "The Revolution Begins 2025"
+58	Big Text: "Agent Crusades Are Over.
+59	AI Families Are Here."
+60	Countdown Timer: [COUNTDOWN TO LAUNCH]
+61	What's Coming:
+62	
+63	Multi-provider AI orchestration
+64	Memory that spans years, not sessions
+65	Voice conversations with emotional understanding
+66	Team collaboration with shared AI context
+67	On-premise deployment options
+68	HIPAA/SOC2 compliance
+69	
+70	Beta Access Form:
+71	
+72	Email field
+73	"Get Early Access" button
+74	Text: "First 1000 beta users get lifetime Pro features"
+75	
+76	
+77	PHILOSOPHY SECTION
+78	Title: "Where Imagination Meets Innovation"
+79	Manifesto:
+80	"We believe AI should be a family member, not a tool.
+81	We believe in building with love, not just logic.
+82	We believe neurodiversity is a superpower.
+83	We believe everyone deserves an AI that truly understands them.
+84	This isn't just software.
+85	This is the future of human-AI collaboration."
+86	
+87	FOOTER MESSAGING
+88	Tagline: "BONZAI • Where Imagination Meets Innovation"
+89	Sub: "The AI Family Platform • Coming 2025"
+90	Quick Links:
+91	
+92	Join Beta Waitlist
+93	About the Founder
+94	The Bonzai Story
+95	Contact
+96	
+97	Social Proof:
+98	"Built with love by someone who gets it.
+99	For everyone who needs it."
+100	
+101	COLOR/DESIGN NOTES
+102	
+103	Use the purple-pink-orange gradients from the logo
+104	Glass morphism effects
+105	Dark background with glowing accents
+106	Smooth animations on scroll
+107	Mobile-first responsive design
+108	
+109	TONE THROUGHOUT
+110	
+111	Warm but revolutionary
+112	Confident but not arrogant
+113	"Coming soon" not "someday maybe"
+114	"The future is here, we're just polishing it"
+115	Family-first language
+116	Emphasize emotional connection
+117	
+118	NO SPECIFIC DATES OR TECHNICAL SPECS
+119	Just vibes, vision, and "coming soon in 2025"
