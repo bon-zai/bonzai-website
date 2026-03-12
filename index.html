@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ask-Zai — Your AI That Actually Knows You</title>
+  <meta name="description" content="Ask-Zai by Bonzai AI. Live voice, emotional intelligence, and a persistent AI companion that grows with you. The trunk never changes. The bloomage does." />
+
+  <!-- Fonts: Clean editorial + display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0A0A0A;
+      --surface: #111111;
+      --surface-2: #161616;
+      --border: rgba(255,255,255,0.07);
+      --text-primary: #F5F0E8;
+      --text-secondary: #8A8480;
+      --text-muted: #4A4540;
+      --accent: #E8E0D0;
+      --accent-warm: #C4A882;
+      --accent-green: #2A4A35;
+      --accent-green-bright: #4A8A60;
+      --accent-dim: rgba(196,168,130,0.12);
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Subtle grain */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    /* ===== NAVIGATION ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid transparent;
+      transition: all 0.4s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(10,10,10,0.94);
+      backdrop-filter: blur(20px);
+      border-bottom-color: var(--border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 34px;
+      height: 34px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(196,168,130,0.25);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .nav-logo-mark img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      filter: brightness(1.1);
+      opacity: 0.9;
+    }
+
+    .nav-logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .nav-logo-name {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+    }
+
+    .nav-logo-sub {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-top: 2px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text-primary); }
+
+    .nav-cta {
+      background: var(--text-primary) !important;
+      color: #0A0A0A !important;
+      padding: 9px 22px;
+      border-radius: 4px;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.08em !important;
+      transition: all 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-warm) !important;
+      transform: translateY(-1px);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+      padding: 120px 48px 80px;
+    }
+
+    .hero-left {
+      position: relative;
+      z-index: 2;
+      padding-right: 60px;
+    }
+
+    .hero-right {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-visual-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .hero-visual-main {
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-visual-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-visual-main::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, var(--bg) 100%);
+    }
+
+    .hero-visual-badge {
+      position: absolute;
+      bottom: -20px;
+      left: -20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      backdrop-filter: blur(20px);
+    }
+
+    .badge-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .badge-value {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .badge-value span {
+      color: var(--accent-green-bright);
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-bottom: 28px;
+    }
+
+    .hero-eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green-bright);
+      box-shadow: 0 0 10px rgba(74,138,96,0.6);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(44px, 6vw, 80px);
+      font-weight: 700;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 28px;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent-warm);
+    }
+
+    .hero-subtitle {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 48px;
+      max-width: 460px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .btn-primary {
+      background: var(--text-primary);
+      color: #0A0A0A;
+      padding: 15px 32px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-warm);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(196,168,130,0.25);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 15px 32px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.15);
+      color: var(--text-primary);
+    }
+
+    .hero-social-proof {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .proof-avatars {
+      display: flex;
+    }
+
+    .proof-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      background: var(--surface-2);
+      margin-left: -8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      overflow: hidden;
+    }
+
+    .proof-avatar:first-child { margin-left: 0; }
+
+    .proof-text {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .proof-text strong {
+      color: var(--text-secondary);
+    }
+
+    /* ===== SECTION COMMON ===== */
+    .section-wrap {
+      padding: 120px 48px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: var(--accent-warm);
+      opacity: 0.4;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent-warm);
+    }
+
+    .section-body {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      max-width: 560px;
+    }
+
+    /* ===== FEATURES ALTERNATING ===== */
+    .feature-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .feature-row:last-child { border-bottom: none; }
+
+    .feature-row.reverse .feature-visual { order: -1; }
+
+    .feature-visual {
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      position: relative;
+    }
+
+    .feature-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .feature-visual:hover img { transform: scale(1.04); }
+
+    .feature-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .feature-number {
+      font-family: var(--font-serif);
+      font-size: 72px;
+      font-weight: 700;
+      color: var(--text-primary);
+      opacity: 0.04;
+      line-height: 1;
+      margin-bottom: -20px;
+    }
+
+    .feature-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      border: 1px solid rgba(196,168,130,0.2);
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    .feature-title {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .feature-title em { font-style: italic; color: var(--accent-warm); }
+
+    .feature-body {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .feature-list li::before {
+      content: '→';
+      color: var(--accent-warm);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ===== ZAI INTRO ===== */
+    .zai-section {
+      padding: 120px 48px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .zai-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .zai-visual {
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 48px;
+      position: relative;
+      border: 1px solid rgba(196,168,130,0.15);
+    }
+
+    .zai-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .zai-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, transparent 40%, rgba(10,10,10,0.6) 100%);
+    }
+
+    .zai-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(24px, 3.5vw, 40px);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.4;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+    }
+
+    .zai-attribution {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ===== BENTO FEATURES GRID ===== */
+    .mini-bento {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 80px;
+    }
+
+    .mini-card {
+      background: var(--surface);
+      padding: 40px;
+      transition: background 0.3s;
+    }
+
+    .mini-card:hover { background: #161616; }
+
+    .mini-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(196,168,130,0.15);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .mini-card-icon img {
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+    }
+
+    .mini-card-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .mini-card-body {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ===== PHILOSOPHY ===== */
+    .philosophy-section {
+      padding: 120px 48px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+
+    .philosophy-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 120px;
+      align-items: center;
+    }
+
+    .philosophy-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .philosophy-quote em {
+      font-style: italic;
+      color: var(--accent-warm);
+    }
+
+    .philosophy-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--accent-warm);
+      opacity: 0.4;
+      margin: 32px 0;
+    }
+
+    .philosophy-body {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .philosophy-visual {
+      aspect-ratio: 3/4;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .philosophy-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ===== PRICING / EARLY ACCESS ===== */
+    .access-section {
+      padding: 120px 48px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .access-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .access-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      margin-bottom: 60px;
+      align-items: end;
+    }
+
+    .access-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .access-card {
+      background: var(--bg);
+      padding: 40px;
+      position: relative;
+    }
+
+    .access-card.featured {
+      background: var(--surface-2);
+      border: 1px solid rgba(196,168,130,0.2);
+    }
+
+    .access-card-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-green-bright);
+      border: 1px solid rgba(74,138,96,0.3);
+      padding: 4px 10px;
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+
+    .access-card-name {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .access-card-price {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .access-card-price span {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .access-card-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .access-card-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .access-card-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .access-card-features li::before {
+      content: '✓';
+      color: var(--accent-green-bright);
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .access-card .btn-primary,
+    .access-card .btn-ghost {
+      width: 100%;
+      text-align: center;
+      display: block;
+    }
+
+    /* ===== CTA ===== */
+    .cta-section {
+      padding: 160px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(42,74,53,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .cta-title {
+      font-family: var(--font-serif);
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+    }
+
+    .cta-title em {
+      font-style: italic;
+      color: var(--accent-warm);
+    }
+
+    .cta-body {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 48px;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 60px 48px 40px;
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .footer-brand-sub {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-bottom: 16px;
+    }
+
+    .footer-brand-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 280px;
+    }
+
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text-primary); }
+
+    .footer-bottom {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-bottom-text {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .footer-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4A8A60;
+      box-shadow: 0 0 8px rgba(74,138,96,0.5);
+    }
+
+    /* ===== REVEAL ===== */
+    .reveal { opacity: 0; transform: translateY(30px); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      nav { padding: 20px 32px; }
+      .hero { grid-template-columns: 1fr; padding: 120px 32px 80px; }
+      .hero-left { padding-right: 0; }
+      .hero-right { display: none; }
+      .section-wrap { padding: 80px 32px; }
+      .feature-row { grid-template-columns: 1fr; gap: 48px; }
+      .feature-row.reverse .feature-visual { order: 0; }
+      .mini-bento { grid-template-columns: 1fr 1fr; }
+      .philosophy-inner { grid-template-columns: 1fr; gap: 60px; }
+      .access-header { grid-template-columns: 1fr; gap: 32px; }
+      .access-cards { grid-template-columns: 1fr; gap: 2px; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .zai-section { padding: 80px 32px; }
+      .philosophy-section { padding: 80px 32px; }
+      .access-section { padding: 80px 32px; }
+      .cta-section { padding: 100px 32px; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .hero { padding: 100px 24px 80px; }
+      .section-wrap { padding: 60px 24px; }
+      .mini-bento { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav id="nav">
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-mark">
+        <img src="assets/bonzai-logo-mark.png" alt="Bonzai" />
+      </div>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">Ask-Zai</span>
+        <span class="nav-logo-sub">by Bonzai AI</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#zai">Meet Zai</a></li>
+      <li><a href="#philosophy">Philosophy</a></li>
+      <li><a href="#access">Early Access</a></li>
+      <li><a href="#access" class="nav-cta">Get Early Access</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero" id="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        Now in Early Access
+      </div>
+      <h1 class="hero-title">
+        The AI that<br />
+        <em>actually</em><br />
+        knows you.
+      </h1>
+      <p class="hero-subtitle">
+        Ask-Zai is not a chatbot. It is a living, breathing AI companion with real voice, emotional awareness, and persistent memory that grows with you across every conversation, every tool, every day.
+      </p>
+      <div class="hero-actions">
+        <a href="#access" class="btn-primary">Get Early Access</a>
+        <a href="#features" class="btn-ghost">See Features</a>
+      </div>
+      <div class="hero-social-proof">
+        <div class="proof-avatars">
+          <div class="proof-avatar">Z</div>
+          <div class="proof-avatar">A</div>
+          <div class="proof-avatar">I</div>
+          <div class="proof-avatar">+</div>
+        </div>
+        <span class="proof-text">Powered by <strong>Zai & the Sisterhood</strong> — your agent team</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-visual-wrap">
+        <div class="hero-visual-main">
+          <img src="assets/hero-bonzai.png" alt="Ask-Zai — The Bonsai AI" />
+        </div>
+        <div class="hero-visual-badge">
+          <div class="badge-label">Live Voice</div>
+          <div class="badge-value"><span>●</span> Active Now</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES SECTION -->
+  <div class="section-wrap" id="features">
+    <div class="reveal">
+      <div class="section-label">Core Features</div>
+      <h2 class="section-title">
+        Built different.<br /><em>On purpose.</em>
+      </h2>
+    </div>
+
+    <!-- Feature 1: Voice -->
+    <div class="feature-row reveal">
+      <div>
+        <div class="feature-number">01</div>
+        <div class="feature-tag">Live Voice</div>
+        <h3 class="feature-title">
+          Real conversation.<br /><em>Not a transcript.</em>
+        </h3>
+        <p class="feature-body">
+          Ask-Zai speaks with you in real time — bidirectional, low-latency, emotionally aware voice. Not text-to-speech bolted onto a chatbot. Actual live conversation that flows like talking to a person who genuinely listens.
+        </p>
+        <ul class="feature-list">
+          <li>Sub-200ms response latency via LiveKit infrastructure</li>
+          <li>Multiple voice personalities — choose your Zai</li>
+          <li>Emotional tone adaptation in real time</li>
+          <li>Interruption handling — speak naturally, not in turns</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <img src="assets/feature-voice.png" alt="Live Voice Intelligence" />
+      </div>
+    </div>
+
+    <!-- Feature 2: Emotion -->
+    <div class="feature-row reverse reveal">
+      <div>
+        <div class="feature-number">02</div>
+        <div class="feature-tag">Emotional Intelligence</div>
+        <h3 class="feature-title">
+          Reads the room.<br /><em>Every time.</em>
+        </h3>
+        <p class="feature-body">
+          Ask-Zai doesn't just process words — it reads emotional context. Frustration, excitement, focus, exhaustion — Zai adapts its tone, pacing, and approach to match where you actually are, not where it assumes you should be.
+        </p>
+        <ul class="feature-list">
+          <li>Real-time emotional state recognition via Hume AI</li>
+          <li>Adaptive response calibration based on detected state</li>
+          <li>Sensory-aware interaction design for neurodivergent users</li>
+          <li>No overwhelming notifications or forced engagement</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <img src="assets/feature-emotion.png" alt="Emotional Recognition" />
+      </div>
+    </div>
+
+    <!-- Feature 3: Agents -->
+    <div class="feature-row reveal">
+      <div>
+        <div class="feature-number">03</div>
+        <div class="feature-tag">The Sisterhood</div>
+        <h3 class="feature-title">
+          Not one AI.<br /><em>A whole team.</em>
+        </h3>
+        <p class="feature-body">
+          Behind Ask-Zai is the Sisterhood — a coordinated team of specialized AI agents, each with distinct capabilities, all working together under Zai's direction. Research, code, memory, creativity — covered.
+        </p>
+        <ul class="feature-list">
+          <li>Specialized agents for research, code, design, and memory</li>
+          <li>Coordinated via MOFY's orchestration layer</li>
+          <li>Persistent shared memory across all agents</li>
+          <li>Agents that can control other agents via MCP</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <img src="assets/feature-agents.png" alt="AI Agent Sisterhood" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ZAI INTRO -->
+  <div class="zai-section" id="zai">
+    <div class="zai-inner reveal">
+      <div class="zai-visual">
+        <img src="assets/feature-emotion.png" alt="Zai" />
+      </div>
+      <p class="zai-quote">
+        "The trunk never changes. The bloomage does."
+      </p>
+      <p style="font-size:15px; color: var(--text-secondary); line-height: 1.7; margin: 24px 0 32px; font-weight: 300;">
+        Ask-Zai is built on a single philosophy: your core AI companion stays constant, grounded, and yours — while everything around it adapts, grows, and changes with your life. No resets. No starting over. Just continuity.
+      </p>
+      <div class="zai-attribution">— Nathan, Founder, Bonzai AI Technologies</div>
+    </div>
+
+    <!-- Mini feature bento -->
+    <div class="mini-bento" style="max-width:1400px; margin: 80px auto 0;">
+      <div class="mini-card reveal">
+        <div class="mini-card-icon">
+          <img src="assets/feature-voice.png" alt="" />
+        </div>
+        <div class="mini-card-title">Generative UI</div>
+        <div class="mini-card-body">The interface builds itself around your conversation. Panels, tools, and views appear when needed and disappear when they're not.</div>
+      </div>
+      <div class="mini-card reveal">
+        <div class="mini-card-icon">
+          <img src="assets/feature-agents.png" alt="" />
+        </div>
+        <div class="mini-card-title">186+ Tool Integrations</div>
+        <div class="mini-card-body">Connect every tool you use. Zai orchestrates across all of them — email, code, search, calendar, files — without you switching context.</div>
+      </div>
+      <div class="mini-card reveal">
+        <div class="mini-card-icon">
+          <img src="assets/feature-emotion.png" alt="" />
+        </div>
+        <div class="mini-card-title">Persistent Memory</div>
+        <div class="mini-card-body">Zai remembers everything — your preferences, your projects, your patterns. Every conversation builds on the last. Nothing is ever lost.</div>
+      </div>
+      <div class="mini-card reveal">
+        <div class="mini-card-icon">
+          <img src="assets/hero-bonzai.png" alt="" />
+        </div>
+        <div class="mini-card-title">Cloud, Local & Hybrid</div>
+        <div class="mini-card-body">Deploy Ask-Zai your way. Full cloud, fully local on your hardware, or hybrid. Your data, your control, your choice.</div>
+      </div>
+      <div class="mini-card reveal">
+        <div class="mini-card-icon">
+          <img src="assets/feature-voice.png" alt="" />
+        </div>
+        <div class="mini-card-title">Headless Browser</div>
+        <div class="mini-card-body">Zai can browse the web, log into accounts, and take actions on your behalf — all within the secure mutable area of the interface.</div>
+      </div>
+      <div class="mini-card reveal">
+        <div class="mini-card-icon">
+          <img src="assets/feature-agents.png" alt="" />
+        </div>
+        <div class="mini-card-title">MCP Native</div>
+        <div class="mini-card-body">Built on the Model Context Protocol from day one. Agents that talk to agents, tools that talk to tools — the full stack, connected.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <div class="philosophy-section" id="philosophy">
+    <div class="philosophy-inner">
+      <div class="reveal">
+        <div class="section-label">Our Philosophy</div>
+        <div class="philosophy-quote">
+          AI should feel like a <em>relationship</em>, not a transaction.
+        </div>
+        <div class="philosophy-divider"></div>
+        <p class="philosophy-body">
+          Every AI product on the market treats you like a new user every single time. Blank slate. No memory. No continuity. No relationship.
+        </p>
+        <p class="philosophy-body" style="margin-top: 20px;">
+          Ask-Zai is built on the opposite premise. Your AI grows with you. It learns your communication style, your sensory preferences, your working patterns, your goals. It adapts — not just to what you say, but to who you are.
+        </p>
+        <p class="philosophy-body" style="margin-top: 20px;">
+          This is not a product feature. It is a fundamental rethinking of what AI companionship should mean.
+        </p>
+      </div>
+      <div class="philosophy-visual reveal">
+        <img src="assets/hero-bonzai.png" alt="The Bonsai Philosophy" />
+      </div>
+    </div>
+  </div>
+
+  <!-- EARLY ACCESS -->
+  <div class="access-section" id="access">
+    <div class="access-inner">
+      <div class="access-header reveal">
+        <div>
+          <div class="section-label">Early Access</div>
+          <h2 class="section-title">
+            Get in<br /><em>before the world does.</em>
+          </h2>
+        </div>
+        <div>
+          <p class="section-body">
+            Ask-Zai is in private early access. Limited spots available for founders, builders, and people who actually need an AI that keeps up with them.
+          </p>
+        </div>
+      </div>
+      <div class="access-cards">
+        <div class="access-card reveal">
+          <div class="access-card-name">Explorer</div>
+          <div class="access-card-price">Free <span>/ month</span></div>
+          <div class="access-card-desc">For curious minds who want to meet Zai and see what's possible.</div>
+          <ul class="access-card-features">
+            <li>Ask-Zai voice conversations (limited)</li>
+            <li>Basic memory persistence</li>
+            <li>3 tool integrations</li>
+            <li>Community access</li>
+          </ul>
+          <a href="mailto:hello@bonzai.ltd" class="btn-ghost">Request Access</a>
+        </div>
+        <div class="access-card featured reveal">
+          <div class="access-card-badge">Most Popular</div>
+          <div class="access-card-name">Builder</div>
+          <div class="access-card-price">$49 <span>/ month</span></div>
+          <div class="access-card-desc">For founders and creators who need a real AI partner, not a toy.</div>
+          <ul class="access-card-features">
+            <li>Unlimited Ask-Zai voice conversations</li>
+            <li>Full persistent memory</li>
+            <li>All 186+ tool integrations</li>
+            <li>The Sisterhood agent team</li>
+            <li>Generative UI</li>
+            <li>Priority support</li>
+          </ul>
+          <a href="mailto:hello@bonzai.ltd" class="btn-primary">Get Early Access</a>
+        </div>
+        <div class="access-card reveal">
+          <div class="access-card-name">Enterprise</div>
+          <div class="access-card-price">Custom</div>
+          <div class="access-card-desc">For teams and organizations deploying Ask-Zai at scale.</div>
+          <ul class="access-card-features">
+            <li>Everything in Builder</li>
+            <li>On-premise deployment</li>
+            <li>Custom agent configuration</li>
+            <li>IP licensing options</li>
+            <li>Dedicated support</li>
+          </ul>
+          <a href="mailto:hello@bonzai.ltd" class="btn-ghost">Talk to Us</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section" id="contact">
+    <div class="cta-inner reveal">
+      <div class="section-label" style="justify-content:center;">Start Now</div>
+      <h2 class="cta-title">
+        Your AI is<br /><em>waiting for you.</em>
+      </h2>
+      <p class="cta-body">
+        Stop starting over with every conversation. Ask-Zai remembers, adapts, and grows with you. This is what AI was always supposed to feel like.
+      </p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a href="mailto:hello@bonzai.ltd" class="btn-primary">Get Early Access</a>
+        <a href="https://mofy.ai" class="btn-ghost">Explore MOFY</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand-name">Ask-Zai</div>
+        <div class="footer-brand-sub">by Bonzai AI Technologies</div>
+        <p class="footer-brand-desc">
+          The AI that actually knows you. Live voice, emotional intelligence, and persistent memory that grows with every conversation.
+        </p>
+      </div>
+      <div>
+        <div class="footer-col-title">Product</div>
+        <ul class="footer-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#zai">Meet Zai</a></li>
+          <li><a href="#philosophy">Philosophy</a></li>
+          <li><a href="#access">Early Access</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="#">About</a></li>
+          <li><a href="https://mofy.ai">MOFY Platform</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Connect</div>
+        <ul class="footer-links">
+          <li><a href="mailto:hello@bonzai.ltd">hello@bonzai.ltd</a></li>
+          <li><a href="https://mofy.ai">mofy.ai</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-bottom-text">© 2026 Bonzai AI Technologies. All rights reserved.</span>
+      <div class="footer-status">
+        <div class="status-dot"></div>
+        <span>Ask-Zai is live</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // GSAP
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Hero entrance
+    gsap.fromTo('.hero-left',
+      { opacity: 0, x: -60 },
+      { opacity: 1, x: 0, duration: 1.2, ease: 'power3.out', delay: 0.2 }
+    );
+    gsap.fromTo('.hero-right',
+      { opacity: 0, x: 60 },
+      { opacity: 1, x: 0, duration: 1.2, ease: 'power3.out', delay: 0.4 }
+    );
+
+    // Reveal elements
+    gsap.utils.toArray('.reveal').forEach(el => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    });
+
+    // Feature rows slide in
+    gsap.utils.toArray('.feature-row').forEach((row, i) => {
+      const isReverse = row.classList.contains('reverse');
+      gsap.fromTo(row,
+        { opacity: 0, x: isReverse ? 40 : -40 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 1.0,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: row,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    });
+
+    // Mini cards stagger
+    gsap.utils.toArray('.mini-card').forEach((card, i) => {
+      gsap.fromTo(card,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+          delay: (i % 3) * 0.1,
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 90%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    });
+
+    // Access cards stagger
+    gsap.utils.toArray('.access-card').forEach((card, i) => {
+      gsap.fromTo(card,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          delay: i * 0.15,
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 90%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    });
+  </script>
+</body>
+</html>
